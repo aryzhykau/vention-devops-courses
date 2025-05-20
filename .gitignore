@@ -1,0 +1,43 @@
+# Прочие временные файлы и логи
+*.log
+*.tmp
+*.bak
+
+# Системные файлы macOS
+.DS_Store
+
+# Зависимости Node.js
+node_modules/
+
+# Зависимости Python
+__pycache__/
+*.pyc
+*.pyd
+*.pyo
+.venv/
+venv/
+
+# Файлы сборки
+build/
+dist/
+
+# Docker временные файлы
+docker.sock
+
+# Terraform временные файлы
+.terraform/
+*.tfplan
+*.tfstate
+
+# Kubernetes kubeconfig
+*.kube/config
+
+# IDE временные файлы (примеры)
+.idea/
+.vscode/
+
+# Файл для заметок AI ассистента
+.dev_notes.md
+
+# Файлы с заметками для AI в модулях
+*/.module_notes.md 
