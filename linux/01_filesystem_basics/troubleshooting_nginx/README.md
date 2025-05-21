@@ -11,8 +11,8 @@
 1.  **Подготовка:**
     *   Убедитесь, что у вас есть доступ к терминалу сервера с установленным Nginx (или установите Nginx локально).
     *   Перейдите в директорию `linux/01_filesystem_basics/troubleshooting_nginx`.
-    *   Выполните `sudo ./setup.sh`, который находится в этой же директории. **ВНИМАНИЕ:** Этот скрипт внесет изменения в системные файлы (установит Nginx, если его нет, изменит конфигурацию). Убедитесь, что вы понимаете, что делает скрипт, прежде чем его запускать, и запускайте его в подходящем окружении (виртуальная машина, контейнер).
-    *   После запуска `sudo ./setup.sh`, попробуйте проверить статус сервиса Nginx (`systemctl status nginx`) и убедитесь, что он не запущен и показывает ошибку.
+    *   Выполните скрипт с помощью команды `sudo ./setup.sh.x`, который находится в этой же директории. **ВНИМАНИЕ:** Этот скрипт внесет изменения в системные файлы (установит Nginx, если его нет, изменит конфигурацию). Убедитесь, что вы понимаете, что делает скрипт, прежде чем его запускать, и запускайте его в подходящем окружении (виртуальная машина, контейнер).
+    *   После запуска `sudo ./setup.sh.x`, попробуйте проверить статус сервиса Nginx (`systemctl status nginx`) и убедитесь, что он не запущен и показывает ошибку.
 
 2.  **Диагностика и Поиск:**
     *   Используйте команды навигации (`cd`, `pwd`, `ls`) для перемещения по файловой системе и осмотра содержимого директорий.
@@ -46,8 +46,8 @@ Imagine you are working on a server where Nginx is installed. After recent chang
 1.  **Preparation:**
     *   Ensure you have access to a server terminal with Nginx installed (or install Nginx locally).
     *   Navigate to the `linux/01_filesystem_basics/troubleshooting_nginx` directory.
-    *   Execute the `sudo ./setup.sh` script located in this directory. **ATTENTION:** This script will make changes to system files (install Nginx if not present, modify configuration). Make sure you understand what the script does before running it, and run it in an appropriate environment (virtual machine, container).
-    *   After running `sudo ./setup.sh`, try checking the Nginx service status (`systemctl status nginx`) and confirm it is not running and shows an error.
+    *   Execute the `sudo ./setup.sh.x` script located in this directory. **ATTENTION:** This script will make changes to system files (install Nginx if not present, modify configuration). Make sure you understand what the script does before running it, and run it in an appropriate environment (virtual machine, container).
+    *   After running `sudo ./setup.sh.x`, try checking the Nginx service status (`systemctl status nginx`) and confirm it is not running and shows an error.
 
 2.  **Diagnosis and Searching:**
     *   Use navigation commands (`cd`, `pwd`, `ls`) to move around the filesystem and inspect directory contents.

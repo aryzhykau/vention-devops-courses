@@ -5,8 +5,8 @@
 | - Удалить группу `operations` (если пуста)                                                       |
 |                                                                                                   |
 | **Скрипты:**                                                                                     |
-| - `check.sh` - проверяет, что пользователь и группа удалены                                      |
-| - `cleanup.sh` - удаляет остатки                                                                 |
+| - `check.sh.x` - проверяет, что пользователь и группа удалены                                      |
+| - `cleanup.sh.x` - удаляет остатки                                                                 |
 |                                                                                                   |
 | **Task 4: User and Group Deletion**                                                              |
 |                                                                                                   |
@@ -14,6 +14,6 @@
 | - Delete group `operations` (if empty)                                                           |
 |                                                                                                   |
 | **Scripts:**                                                                                     |
-| - `check.sh` - checks if user/group are deleted                                                  |
-| - `cleanup.sh` - cleans up leftovers                                                             |
+| - `check.sh.x` - checks if user/group are deleted                                                  |
+| - `cleanup.sh.x` - cleans up leftovers                                                             |
 |---------------------------------------------------------------------------------------------------|

@@ -7,8 +7,8 @@
 |   - Остальные - только чтение                                                                    |
 |                                                                                                   |
 | **Скрипты:**                                                                                     |
-| - `check.sh` - проверяет права и группу-владельца                                                |
-| - `cleanup.sh` - удаляет папку                                                                   |
+| - `check.sh.x` - проверяет права и группу-владельца                                                |
+| - `cleanup.sh.x` - удаляет папку                                                                   |
 |                                                                                                   |
 | **Task 3: File Permissions**                                                                     |
 |                                                                                                   |
@@ -18,6 +18,6 @@
 |   - Others - read-only                                                                           |
 |                                                                                                   |
 | **Scripts:**                                                                                     |
-| - `check.sh` - verifies permissions and ownership                                                |
-| - `cleanup.sh` - removes the directory                                                           |
+| - `check.sh.x` - verifies permissions and ownership                                                |
+| - `cleanup.sh.x` - removes the directory                                                           |
 |---------------------------------------------------------------------------------------------------|

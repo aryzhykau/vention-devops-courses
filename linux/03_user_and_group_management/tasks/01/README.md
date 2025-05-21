@@ -6,8 +6,8 @@
 | - Проверить, что пользователи созданы                                                            |
 |                                                                                                   |
 | **Скрипты:**                                                                                     |
-| - `check.sh` - проверяет наличие пользователей и паролей                                         |
-| - `cleanup.sh` - удаляет пользователей                                                           |
+| - `check.sh.x` - проверяет наличие пользователей и паролей                                         |
+| - `cleanup.sh.x` - удаляет пользователей                                                           |
 |                                                                                                   |
 | **Task 1: User Creation and Password Assignment**                                                 |
 |                                                                                                   |
@@ -16,6 +16,6 @@
 | - Verify user creation                                                                            |
 |                                                                                                   |
 | **Scripts:**                                                                                     |
-| - `check.sh` - checks if users and passwords exist                                               |
-| - `cleanup.sh` - removes users                                                                   |
+| - `check.sh.x` - checks if users and passwords exist                                               |
+| - `cleanup.sh.x` - removes users                                                                   |
 |---------------------------------------------------------------------------------------------------|

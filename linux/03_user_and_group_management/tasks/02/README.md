@@ -5,8 +5,8 @@
 | - Проверить членство в группах                                                                   |
 |                                                                                                   |
 | **Скрипты:**                                                                                     |
-| - `check.sh` - проверяет состав групп                                                            |
-| - `cleanup.sh` - удаляет группы                                                                  |
+| - `check.sh.x` - проверяет состав групп                                                            |
+| - `cleanup.sh.x` - удаляет группы                                                                  |
 |                                                                                                   |
 | **Task 2: Group Management**                                                                     |
 |                                                                                                   |
@@ -14,6 +14,6 @@
 | - Verify group membership                                                                         |
 |                                                                                                   |
 | **Scripts:**                                                                                     |
-| - `check.sh` - checks group members                                                              |
-| - `cleanup.sh` - deletes groups                                                                  |
+| - `check.sh.x` - checks group members                                                              |
+| - `cleanup.sh.x` - deletes groups                                                                  |
 |---------------------------------------------------------------------------------------------------|

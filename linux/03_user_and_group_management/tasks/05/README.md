@@ -5,8 +5,8 @@
 | - Разрешить группе `developers` перезапускать `nginx`                                            |
 |                                                                                                   |
 | **Скрипты:**                                                                                     |
-| - `check.sh` - проверяет права sudo                                                             |
-| - `cleanup.sh` - удаляет правила из `/etc/sudoers`                                              |
+| - `check.sh.x` - проверяет права sudo                                                             |
+| - `cleanup.sh.x` - удаляет правила из `/etc/sudoers`                                              |
 |                                                                                                   |
 | **Task 5: Sudo Configuration**                                                                   |
 |                                                                                                   |
@@ -14,6 +14,6 @@
 | - Allow `developers` group to restart `nginx`                                                    |
 |                                                                                                   |
 | **Scripts:**                                                                                     |
-| - `check.sh` - checks sudo privileges                                                            |
-| - `cleanup.sh` - removes sudo rules                                                              |
+| - `check.sh.x` - checks sudo privileges                                                            |
+| - `cleanup.sh.x` - removes sudo rules                                                              |
 |---------------------------------------------------------------------------------------------------|

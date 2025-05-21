@@ -4,14 +4,14 @@
 | - Разрешить `ops1` читать файл `/home/dev1/secret.txt` через ACL                                 |
 |                                                                                                   |
 | **Скрипты:**                                                                                     |
-| - `check.sh` - проверяет наличие ACL                                                            |
-| - `cleanup.sh` - удаляет ACL                                                                     |
+| - `check.sh.x` - проверяет наличие ACL                                                            |
+| - `cleanup.sh.x` - удаляет ACL                                                                     |
 |                                                                                                   |
 | **Task 7: ACL (Advanced Permissions)**                                                           |
 |                                                                                                   |
 | - Allow `ops1` to read `/home/dev1/secret.txt` via ACL                                           |
 |                                                                                                   |
 | **Scripts:**                                                                                     |
-| - `check.sh` - checks ACL settings                                                               |
-| - `cleanup.sh` - removes ACL                                                                     |
+| - `check.sh.x` - checks ACL settings                                                               |
+| - `cleanup.sh.x` - removes ACL                                                                     |
 |---------------------------------------------------------------------------------------------------|

@@ -6,8 +6,8 @@
 | - Создать `/var/ci` с правами `750`                                                             |
 |                                                                                                   |
 | **Скрипты:**                                                                                     |
-| - `check.sh` - проверяет пользователя, группу и директорию                                      |
-| - `cleanup.sh` - удаляет всё созданное                                                          |
+| - `check.sh.x` - проверяет пользователя, группу и директорию                                      |
+| - `cleanup.sh.x` - удаляет всё созданное                                                          |
 |                                                                                                   |
 | **Task 6: Automation with Script**                                                               |
 |                                                                                                   |
@@ -16,6 +16,6 @@
 | - Create `/var/ci` with `750` permissions                                                       |
 |                                                                                                   |
 | **Scripts:**                                                                                     |
-| - `check.sh` - checks user, group, and directory                                                 |
-| - `cleanup.sh` - removes all created items                                                       |
+| - `check.sh.x` - checks user, group, and directory                                                 |
+| - `cleanup.sh.x` - removes all created items                                                       |
 |---------------------------------------------------------------------------------------------------|

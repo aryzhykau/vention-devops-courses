@@ -4,14 +4,14 @@
 | - Настроить аудит действий `ops1` через `auditd`                                                |
 |                                                                                                   |
 | **Скрипты:**                                                                                     |
-| - `check.sh` - проверяет правила аудита                                                         |
-| - `cleanup.sh` - удаляет правила                                                                |
+| - `check.sh.x` - проверяет правила аудита                                                         |
+| - `cleanup.sh.x` - удаляет правила                                                                |
 |                                                                                                   |
 | **Task 8: User Activity Auditing**                                                               |
 |                                                                                                   |
 | - Configure `auditd` to log `ops1` actions                                                      |
 |                                                                                                   |
 | **Scripts:**                                                                                     |
-| - `check.sh` - checks audit rules                                                                |
-| - `cleanup.sh` - removes audit rules                                                             |
+| - `check.sh.x` - checks audit rules                                                                |
+| - `cleanup.sh.x` - removes audit rules                                                             |
 |---------------------------------------------------------------------------------------------------|
