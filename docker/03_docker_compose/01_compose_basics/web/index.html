@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Docker Compose Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #2196F3;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+        code {
+            background-color: #e7e7e7;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        #result {
+            background-color: #f9f9f9;
+            padding: 10px;
+            margin-top: 20px;
+            border-left: 4px solid #2196F3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Docker Compose Demo</h1>
+        <p>Это демонстрационная страница для задания по основам Docker Compose.</p>
+        
+        <h2>Информация о странице</h2>
+        <p>Эта страница обслуживается Nginx контейнером. Вы можете изменить её содержимое в папке <code>web</code>.</p>
+        
+        <h2>Многоконтейнерное приложение</h2>
+        <p>Наше приложение состоит из двух сервисов:</p>
+        <ul>
+            <li><strong>Веб-сервер (nginx)</strong> - обслуживает эту страницу</li>
+            <li><strong>База данных (redis)</strong> - хранит данные</li>
+        </ul>
+
+        <div id="result"></div>
+        
+        <h2>Полезные команды Docker Compose</h2>
+        <ul>
+            <li><code>docker-compose up -d</code> - запустить сервисы в фоновом режиме</li>
+            <li><code>docker-compose down</code> - остановить и удалить контейнеры</li>
+            <li><code>docker-compose ps</code> - показать список запущенных контейнеров</li>
+            <li><code>docker-compose logs</code> - показать логи</li>
+        </ul>
+    </div>
+</body>
+</html> 

@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+  # Веб-сервер на базе Nginx
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    volumes:
+      - ./web:/usr/share/nginx/html
+    depends_on:
+      - db
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  # База данных Redis
+  db:
+    image: redis:alpine
+    container_name: redis_db
+    restart: unless-stopped
+    networks:
+      - app-network
+    # Порт открыт только для отладки, в production можно убрать
+    ports:
+      - "6379:6379"
+
+# Определение сети для связи контейнеров
+networks:
+  app-network:
+    driver: bridge 
