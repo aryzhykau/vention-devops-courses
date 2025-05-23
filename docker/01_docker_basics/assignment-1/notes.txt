@@ -1,0 +1,8 @@
+# Assignment 1 – Docker Basics
+
+## Task 1: Verifying Docker Installation
+
+**Command:**
+```bash
+docker --version
+docker info
