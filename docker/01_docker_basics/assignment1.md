@@ -1,20 +1,13 @@
+## Task 3: Working with Containers
+
 ```bash
-# Check Docker version
-docker --version
-
-# Verify that the Docker daemon is running
-docker info
-
-# Run nginx container in detached mode and map port 8080 to 80
+# Run nginx container in detached mode
 docker run -d -p 8080:80 --name my-nginx nginx
 
 # Check running containers
 docker ps
 
-# Verify web server is accessible
-curl http://localhost:8080
-
-# View container logs
+# View logs
 docker logs my-nginx
 
 # Stop the container
@@ -23,6 +16,10 @@ docker stop my-nginx
 # Start the container again
 docker start my-nginx
 
-# Remove the container
+# Delete the container
 docker rm -f my-nginx
 ```
+
+**Explanation:**  
+This task involved managing the lifecycle of an `nginx` container. After starting it, we verified it was running, checked the logs, stopped and restarted it, and finally removed it using the `rm -f` flag which forces deletion even if the container is running.
+
