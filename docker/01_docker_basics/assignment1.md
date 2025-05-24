@@ -80,3 +80,35 @@ The `ip addr` command showed two interfaces:
 
 **Explanation:**  
 Running containers interactively is useful for debugging and manual setup. This task showed that containers can retain changes (like installed packages) if not deleted. It also demonstrated that containers have their own network interfaces.
+
+# Pull the official PostgreSQL image
+docker pull postgres
+
+# Run PostgreSQL container with environment variables
+docker run --name my-postgres \
+  -e POSTGRES_USER=devuser \
+  -e POSTGRES_PASSWORD=devpass123 \
+  -e POSTGRES_DB=devdb \
+  -p 5433:5432 \
+  -d postgres
+
+# Verify that the container is running
+docker ps
+
+# View logs to confirm PostgreSQL is accepting connections
+docker logs my-postgres
+
+# Access the container's shell
+docker exec -it my-postgres bash
+
+# Inside the container: connect to PostgreSQL
+psql -U devuser -d devdb
+
+# Exit the PostgreSQL CLI and container shell
+\q
+exit
+
+**Explanation:**
+This task showed how to use Docker Hub to pull and run an official PostgreSQL image with custom configuration using environment variables. I learned how to handle port conflicts by remapping the host port and verified that the containerized database was working through logs and by connecting with psql inside the container.
+
+
