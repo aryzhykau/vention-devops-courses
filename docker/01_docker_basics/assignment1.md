@@ -46,3 +46,37 @@ docker inspect nginx
 **Explanation:**  
 Inspecting images helps us understand how Docker stores and builds containers. Layers are key to Docker’s efficiency. Knowing the image size, architecture, and layer structure is useful when debugging, optimizing, or auditing images.
 
+## Task 5: Running Interactive Containers
+
+```bash
+# Run Ubuntu container in interactive mode
+docker run -it --name ubuntu-container ubuntu:latest bash
+
+# Inside the container:
+apt update
+apt install -y curl
+apt install -y iproute2
+ip addr
+
+# Exit the container
+exit
+
+# Start the container again and reattach
+docker start -ai ubuntu-container
+
+# Check if curl is still installed
+curl --version
+```
+
+**Findings:**
+- The container had its own IP address: 172.17.0.2
+
+**Explanation:**  
+The `ip addr` command showed two interfaces:  
+- `lo` (loopback) for internal container communication (127.0.0.1)  
+- `eth0` as the main interface with IP `172.17.0.2`, assigned by Docker's default bridge network
+
+- curl was installed and persisted after restarting the container.
+
+**Explanation:**  
+Running containers interactively is useful for debugging and manual setup. This task showed that containers can retain changes (like installed packages) if not deleted. It also demonstrated that containers have their own network interfaces.
