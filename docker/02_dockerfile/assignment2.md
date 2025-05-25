@@ -84,4 +84,51 @@ curl http://localhost:5001
 # Output:
 
 Hello from a multi-stage build Docker container!
+## Task 4: Creating and Publishing Your Own Image
+
+# I created a Docker Hub account and successfully published a Docker image based on my optimized Flask app.
+
+### Steps Followed
+
+# 1. Verified my email and created a personal access token with read/write scope.
+# 2. Logged in to Docker Hub from my Ubuntu terminal:
+   ```bash
+   docker login -u petert800
+   
+# 3. Tagged my image for Docker Hub:
+docker tag python-app:good petert800/python-app:good
+
+# 4. Pushed the image to my public repository:
+docker push petert800/python-app:good
+
+### Result:
+# My image is now available at:
+https://hub.docker.com/r/petert800/python-app
+
+```
 ---
+
+## Task 4: Creating and Publishing Your Own Image
+
+I created a Docker Hub account and successfully published a Docker image based on my optimized Flask app.
+
+### Steps Followed
+
+# 1. Verified my email and created a personal access token with read/write scope.
+# 2. Logged in to Docker Hub from my Ubuntu terminal:
+   ```bash
+   docker login -u petert800
+   
+# 3. Tagged my image for Docker Hub:
+docker tag python-app:good petert800/python-app:good
+
+# 4. Pushed the image to my public repository:
+docker push petert800/python-app:good
+
+### Result:
+# My image is now available at:
+https://hub.docker.com/r/petert800/python-app
+
+```
+---
+
