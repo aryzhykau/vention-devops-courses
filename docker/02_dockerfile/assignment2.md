@@ -175,3 +175,18 @@ curl http://localhost:5003  # Alpine version
 # Output:
 Hello from a Python app in Docker!
 ---
+### Additional Task: HEALTHCHECK Instruction
+
+I added a `HEALTHCHECK` instruction to my Flask app Docker image to automatically monitor app health.
+
+#### Final Dockerfile Excerpt
+
+```Dockerfile
+RUN apt-get update && apt-get install -y curl && \
+    pip install --no-cache-dir -r requirements.txt
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD curl -f http://localhost:5000/ || exit 1
+
+The health check ensures the container responds on port 5000 with an HTTP 200. After building and running the image, Docker correctly reported the container as (healthy).
+---
