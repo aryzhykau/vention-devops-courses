@@ -147,3 +147,31 @@ Dockerfile.bad
 
 Rebuilt the image as `python-app:clean`, confirmed that ignored files are not included.
 
+### Additional Task: Alpine vs Ubuntu Base Image
+
+I compared two images of the same Flask app — one built using `python:3.9-slim` (Ubuntu-based) and another using `python:3.9-alpine`.
+
+#### Initial Result
+
+- `flask-ubuntu`: ~136MB
+- `flask-alpine`: ~240MB
+
+The Alpine image was larger because build tools like `gcc`, `libffi-dev`, and `musl-dev` were required to compile dependencies.
+
+#### Optimization
+
+I rebuilt the Alpine image using precompiled dependencies only (`flask==2.0.1`, `werkzeug==2.0.3`) and **removed the build tools**. The result:
+
+- `flask-alpine-light`: ~59.7MB
+
+#### Result
+
+Both images ran successfully and returned the correct output.
+
+```bash
+curl http://localhost:5002  # Ubuntu version
+curl http://localhost:5003  # Alpine version
+
+# Output:
+Hello from a Python app in Docker!
+---
