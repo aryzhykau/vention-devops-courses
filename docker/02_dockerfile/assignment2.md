@@ -23,3 +23,38 @@ docker run -d -p 8081:80 --name my-web-app my-web-app:v1
 **Explanation:** 
 This task taught me how to create a simple Docker image using a Dockerfile, serve static content with nginx, and troubleshoot access issues by adjusting container ports and VirtualBox network settings. I learned how Docker uses COPY to include files and how to make the container available from the host system using port mappings.
 
+## Task 2: Dockerfile Optimization
+
+I created a simple Flask application and built two Docker images using an unoptimized and an optimized Dockerfile.
+
+### Image Comparison
+
+- Unoptimized (`python-app:bad`): ~1.01GB
+- Optimized (`python-app:good`): ~136MB
+
+### Optimizations Applied
+
+- Switched base image from `python:3.9` to `python:3.9-slim` to reduce image size.
+- Used `--no-cache-dir` with `pip install` to avoid storing pip cache and reduce layer size.
+- Installed dependencies before copying the app to leverage Docker layer caching.
+- Initially added `USER nobody` for security, but removed it for compatibility during development.
+- Fixed dependency issue by pinning compatible versions:
+  - `flask==2.0.1`
+  - `werkzeug==2.0.3`
+
+### Running the Container
+
+The optimized image was run with:
+
+```bash
+docker run -d -p 5000:5000 --name python-app python-app:good
+
+# Tested using:
+
+curl http://localhost:5000
+
+# Output:
+
+Hello from a Python app in Docker!
+
+```
