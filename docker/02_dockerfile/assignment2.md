@@ -132,3 +132,18 @@ https://hub.docker.com/r/petert800/python-app
 ```
 ---
 
+### Additional Task: .dockerignore
+
+I created a `.dockerignore` file to exclude unnecessary files from the build context. This helps keep the image clean and reduces build time.
+
+Contents of `.dockerignore`:
+*.pyc
+pycache/
+*.log
+*.md
+.dockerignore
+Dockerfile.bad
+
+
+Rebuilt the image as `python-app:clean`, confirmed that ignored files are not included.
+
