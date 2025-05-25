@@ -58,3 +58,30 @@ curl http://localhost:5000
 Hello from a Python app in Docker!
 
 ```
+## Task 3: Multi-stage Builds
+
+I created a multi-stage Dockerfile to build and run a Flask application more efficiently by separating the build environment from the runtime environment.
+
+### Why Multi-Stage?
+
+- Stage 1 installs Python dependencies using `pip`.
+- Stage 2 (final image) copies only the necessary runtime files.
+- This results in a cleaner, smaller, and more secure image.
+
+### Image Size
+
+- Multi-stage image (`python-multistage-app`): ~166MB
+
+### Running the Container
+
+```bash
+docker run -d -p 5001:5000 --name multistage-app python-multistage-app
+
+# Tested using:
+
+curl http://localhost:5001
+
+# Output:
+
+Hello from a multi-stage build Docker container!
+---
