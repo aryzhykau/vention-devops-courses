@@ -190,3 +190,67 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
 
 The health check ensures the container responds on port 5000 with an HTTP 200. After building and running the image, Docker correctly reported the container as (healthy).
 ---
+### Additional Task: Multi-Stage Build
+
+###  Objective  
+Create a multi-stage Docker build for a React application to reduce image size, optimize performance, and follow containerization best practices.
+
+---
+
+### What Was Done
+
+I implemented a **multi-stage Dockerfile** for a React app that:
+- Builds the app in a lightweight Node.js environment
+- Serves the static files using an optimized NGINX image
+- Excludes unnecessary files using `.dockerignore`
+
+---
+
+###  Final Dockerfile
+
+```Dockerfile
+#### Stage 1: Build React app
+FROM node:18-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+
+### Stage 2: Serve with NGINX
+FROM nginx:alpine
+RUN rm -rf /usr/share/nginx/html/*
+COPY --from=builder /app/build /usr/share/nginx/html
+
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
+```
+
+### Explanation:
+- The first stage installs dependencies and compiles the React app.
+- The second stage copies only the static output and uses NGINX to serve the production build.
+
+### .dockerignore Used
+```
+node_modules
+build
+.dockerignore
+Dockerfile
+*.log
+
+### Build the optimized image
+docker build -t react-demoapp:latest .
+
+### Run it on port 8081 to avoid conflict with Jenkins
+docker run -d -p 8081:80 --name react-demo react-demoapp:latest
+
+### Open in browser:
+ http://localhost:8081
+```
+### Result:
+- Production React app is served via NGINX
+- Lightweight, deployment-ready Docker image
+- Clean separation of build and runtime environments
+
+
+
