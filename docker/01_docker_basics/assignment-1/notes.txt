@@ -6,3 +6,22 @@
 ```bash
 docker --version
 docker info
+
+# Task 2 – Running hello-world
+
+docker run hello-world
+
+# Output:
+Hello from Docker! This message shows that your installation appears to be working correctly...
+
+--rm flag:
+
+# docker run --rm ubuntu echo "test"
+# Container is automatically removed after it exits
+
+Docker networking modes:
+
+docker run --rm --network host alpine ip addr
+docker run --rm --network bridge alpine ip addr
+docker run --rm --network none alpine ip addr
+
