@@ -1,0 +1,20 @@
+# Assignment 6 – I/O Redirection and Pipes
+
+## 1. Standard Output Redirection
+- Redirected output: `ls -l > files_list.txt`
+- Appended output: `date >> files_list.txt`
+- Redirected both stdout and stderr:
+  - `command &> output_and_error.log`
+  - OR: `command > out.txt 2>&1`
+
+## 2. Standard Input Redirection
+- Sorted file input: `sort < unsorted.txt > sorted.txt`
+
+## 3. Using Pipes
+- Filtered and processed:
+  - `cat file.txt | grep "pattern" | sort | uniq`
+- Counted lines with pattern: `cat file.txt | grep "pattern" | wc -l`
+- Combined redirection and piping:
+  - `cat file.txt | grep "error" > errors_only.txt`
+
+Summary: Practiced redirecting output/input, capturing errors, chaining commands, and building pipelines to streamline shell workflows.
