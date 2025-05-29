@@ -1,0 +1,9 @@
+version: '3'
+services:
+  web:
+    image: nginx:alpine
+    expose:
+      - "80"  # Only expose inside the Docker network
+    deploy:
+      replicas: 3
+    restart: always
