@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  frontend:
+    image: nginx:alpine
+    volumes:
+      - ./frontend/html:/usr/share/nginx/html:ro
+    ports:
+      - "3000:80"
+
+  backend:
+    build: ./backend
+    environment:
+      - DB_HOST=db
+      - DB_USER=example
+      - DB_PASS=example
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: example
+      POSTGRES_PASSWORD: example
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:
+
