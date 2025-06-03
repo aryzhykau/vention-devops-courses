@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS S3 Static Website</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .feature {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 3px solid #007bff;
+        }
+        .feature h3 {
+            color: #007bff;
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to AWS S3 Static Website</h1>
+        
+        <div class="features">
+            <div class="feature">
+                <h3>S3 Hosting</h3>
+                <p>This website is hosted on Amazon S3, providing highly available and scalable static website hosting.</p>
+            </div>
+            
+            <div class="feature">
+                <h3>CloudFront CDN</h3>
+                <p>Content is delivered through Amazon CloudFront CDN, ensuring fast loading times worldwide.</p>
+            </div>
+            
+            <div class="feature">
+                <h3>SSL/TLS</h3>
+                <p>Secure communication is enabled with SSL/TLS certificate from AWS Certificate Manager.</p>
+            </div>
+            
+            <div class="feature">
+                <h3>Route 53 DNS</h3>
+                <p>Domain routing is handled by Amazon Route 53 for reliable DNS resolution.</p>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <p>This is a demo website created as part of the AWS training course.</p>
+        </div>
+    </div>
+</body>
+</html> 
