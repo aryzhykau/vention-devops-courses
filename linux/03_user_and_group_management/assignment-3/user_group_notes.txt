@@ -1,0 +1,48 @@
+# Assignment 3 – User and Group Management
+
+## 1. Creating Users and Groups
+- Created user: `sudo useradd -m -s /bin/bash devops_student`
+- Set password: `sudo passwd devops_student`
+- Verified with: `tail -n 1 /etc/passwd`
+
+- Created group: `sudo groupadd course_participants`
+- Verified with: `tail -n 1 /etc/group`
+
+## 2. Modifying Users and Groups
+- Changed comment: `sudo usermod -c "DevOps Student Account" devops_student`
+- Renamed group: `sudo groupmod -n devops_team course_participants`
+
+## 3. Managing Group Membership
+- Added user to group: `sudo usermod -aG devops_team devops_student`
+- Verified with: `groups devops_student`
+
+## 4. Created user without home:
+- `sudo useradd -M guest_user`
+- Verified no home with: `tail -n 1 /etc/passwd`
+
+## 5. Renamed user:
+- `sudo usermod -l student_devops devops_student`
+- Verified with: `id student_devops`
+
+## 6. Changed primary group:
+- Created group: `sudo groupadd temporary_group`
+- Changed group: `sudo usermod -g temporary_group guest_user`
+- Verified: `id guest_user`
+
+## 7. Multiple group membership:
+- `sudo usermod -aG temporary_group student_devops`
+- Verified: `groups student_devops`
+
+## 8. Delete guest_user (keep home):
+- `sudo userdel guest_user`
+- Verified: `/etc/passwd`
+
+## 9. Delete student_devops (with home):
+- `sudo userdel -r student_devops`
+- Verified user/home deletion
+
+## 10. Deleted groups:
+- `sudo groupdel devops_team`
+- `sudo groupdel temporary_group`
+- Verified: `/etc/group`
+

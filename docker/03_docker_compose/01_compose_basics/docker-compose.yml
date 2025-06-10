@@ -7,7 +7,7 @@ services:
       context: ./web
       dockerfile: Dockerfile
     ports:
-      - "80:80"
+      - "8085:80"
     volumes:
       - ./web:/usr/share/nginx/html
     depends_on:

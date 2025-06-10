@@ -1,0 +1,22 @@
+# Assignment 4 – Working with Processes
+
+## 1. Viewing Processes
+- Used `ps aux` to view all running processes.
+- Used `top` to monitor live process activity.
+- Filtered by user: `ps -u ubuntu`
+- Filtered by PID: `ps -p [PID]`
+- Filtered by command: `ps aux | grep [command]`
+
+## 2. Managing Processes
+- Ran `sleep 60` in terminal.
+- Found PID with `ps aux | grep sleep`
+- Terminated process using `kill [PID]`
+- Used `killall sleep` and `pkill sleep` for name-based termination.
+
+## 3. Background and Foreground Execution
+- Ran: `sleep 120 &` (background)
+- Checked background jobs with: `jobs`
+- Brought job to foreground with: `fg`
+- Paused a foreground job with `Ctrl + Z` and resumed in background with `bg`
+
+Summary: Practiced process inspection, termination, and job control using built-in Linux tools.
