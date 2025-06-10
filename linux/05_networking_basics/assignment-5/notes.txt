@@ -1,0 +1,20 @@
+# Assignment 5 – Networking Basics
+
+## 1. Checking Network Connectivity
+- Verified reachability with: `ping google.com`
+- Traced packet route using: `traceroute google.com`
+
+## 2. Viewing Network Configuration
+- Viewed interface info using: `ip addr`
+- Fallback command (if available): `ifconfig`
+- Viewed routing table: `ip route`
+
+## 3. Checking Open Ports and Connections
+- Checked listening ports and connections:
+  - `netstat -tulnp` (if installed)
+  - `ss -tulnp` (modern alternative)
+- Filtered processes by port:
+  - `ss -ltnp | grep :80`
+  - `netstat -tulnp | grep :22`
+
+Summary: Practiced connectivity testing, interface and route inspection, and socket monitoring. Learned to diagnose basic network issues from CLI.

@@ -1,0 +1,62 @@
+# SUID (Set User ID)
+
+The following files on the system have the SUID bit set:
+- /usr/bin/passwd
+- /usr/bin/sudo
+- /usr/bin/chfn
+- /usr/bin/mount
+- /usr/bin/su
+- (…plus many in /snap/core22 and /opt)
+
+These files allow regular users to run specific programs with the permissions of the file’s **owner** (usually root).
+
+Example: 
+`/usr/bin/passwd` lets users change their passwords, even though it modifies `/etc/shadow`, which is root-owned.
+
+SUID is shown in permissions as: 
+`-rwsr-xr-x` (note the `s` in place of the owner's `x`)
+
+# Security Considerations
+
+- SUID programs must be secure and trusted.
+- Exploitable SUID programs can lead to privilege escalation.
+- Avoid setting SUID on custom scripts (kernel ignores SUID on shell scripts).
+
+# SGID Directory Examples
+
+The following directories on my system have the SGID bit set:
+- /var/mail
+- /var/log/journal
+- /run/postgresql
+- /usr/local/share/fonts
+- /etc/ppp/peers
+
+SGID helps keep all new files inside these directories assigned to the correct group — useful for logging, mail spools, shared services, and more.
+
+# Sticky Bit
+
+Set using: chmod 1777 sticky_test
+Symbol: drwxrwxrwt
+
+Sticky Bit prevents users from deleting files owned by others in shared writable directories like /tmp. It's used to protect files in shared spaces.
+
+# Task 4 – Practice with Special Bits
+
+Set SUID:
+chmod u+s file
+chmod 4755 file
+
+Set SGID:
+chmod g+s directory
+chmod 2755 directory
+
+Set Sticky Bit:
+chmod +t directory
+chmod 1777 directory
+
+Combined SGID + Sticky Bit:
+chmod 3775 directory
+
+Combined result:
+- combo_file.sh → shows SUID (rws)
+- combo_dir → shows SGID (s) and Sticky Bit (t)
