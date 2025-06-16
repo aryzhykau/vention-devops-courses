@@ -1,48 +1,50 @@
-# Configure AWS Provider
+# AWS Provider
 provider "aws" {
-  region = "us-west-2"
+  region = var.aws_region
 }
 
-# Random string for unique names
+# Random suffix for unique names
 resource "random_string" "suffix" {
   length  = 8
   special = false
   upper   = false
 }
 
-# Create VPC
+# VPC
 resource "aws_vpc" "main" {
   cidr_block           = "10.0.0.0/16"
   enable_dns_support   = true
   enable_dns_hostnames = true
 
-  tags = {
+  tags = merge(var.tags, {
     Name = "ec2-basic-vpc"
-  }
+  })
 }
 
-# Create public subnet
+# Subnets (public)
 resource "aws_subnet" "public" {
-  vpc_id                  = aws_vpc.main.id
-  cidr_block              = "10.0.1.0/24"
-  map_public_ip_on_launch = true
-  availability_zone       = "us-west-2a"
+  for_each = var.subnets
 
-  tags = {
-    Name = "ec2-public-subnet"
-  }
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = each.value.cidr_block
+  availability_zone       = each.value.availability_zone
+  map_public_ip_on_launch = true
+
+  tags = merge(var.tags, {
+    Name = "ec2-subnet-${each.key}"
+  })
 }
 
-# Create Internet Gateway
+# Internet Gateway
 resource "aws_internet_gateway" "main" {
   vpc_id = aws_vpc.main.id
 
-  tags = {
+  tags = merge(var.tags, {
     Name = "ec2-igw"
-  }
+  })
 }
 
-# Create route table
+# Route Table
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.main.id
 
@@ -51,37 +53,33 @@ resource "aws_route_table" "public" {
     gateway_id = aws_internet_gateway.main.id
   }
 
-  tags = {
+  tags = merge(var.tags, {
     Name = "ec2-public-rt"
-  }
+  })
 }
 
-# Associate route table with subnet
+# Associate Route Table with Subnets
 resource "aws_route_table_association" "public" {
-  subnet_id      = aws_subnet.public.id
+  for_each       = aws_subnet.public
+  subnet_id      = each.value.id
   route_table_id = aws_route_table.public.id
 }
 
-# Create security group
+# Security Group with dynamic ingress rules
 resource "aws_security_group" "web" {
   name        = "web-server-sg"
   description = "Security group for web servers"
   vpc_id      = aws_vpc.main.id
 
-  ingress {
-    description = "HTTP from anywhere"
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    description = "SSH from anywhere"
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]  # In production, restrict to your IP
+  dynamic "ingress" {
+    for_each = var.ingress_rules
+    content {
+      from_port   = ingress.value.from_port
+      to_port     = ingress.value.to_port
+      protocol    = "tcp"
+      cidr_blocks = [ingress.value.cidr]
+      description = ingress.key
+    }
   }
 
   egress {
@@ -91,37 +89,65 @@ resource "aws_security_group" "web" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags = {
+  tags = merge(var.tags, {
     Name = "web-server-sg"
-  }
+  })
 }
 
-# Create key pair
+# Key Pair
 resource "aws_key_pair" "deployer" {
-  key_name   = "deployer-key-${random_string.suffix.result}"
-  public_key = file("~/.ssh/id_rsa.pub")  # Make sure this exists
+  key_name   = "${var.key_pair_name}-${random_string.suffix.result}"
+  public_key = file(var.public_key_path)
 }
 
-# Create EBS volume
+# EBS Volume
 resource "aws_ebs_volume" "data" {
-  availability_zone = "us-west-2a"
-  size             = 20
-  type             = "gp3"
+  availability_zone = var.subnets["public-a"].availability_zone
+  size              = var.ebs_volume_size
+  type              = "gp3"
 
-  tags = {
+  tags = merge(var.tags, {
     Name = "data-volume"
-  }
+  })
 }
 
-# Create EC2 instance
-resource "aws_instance" "web" {
-  ami           = "ami-0735c191cf914754d"  # Amazon Linux 2
-  instance_type = "t2.micro"
+# IAM Role for EC2
+resource "aws_iam_role" "ec2_role" {
+  name = "ec2-role-${random_string.suffix.result}"
 
-  subnet_id                   = aws_subnet.public.id
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Principal = {
+        Service = "ec2.amazonaws.com"
+      }
+      Action = "sts:AssumeRole"
+    }]
+  })
+}
+
+# IAM Role Policy Attachment
+resource "aws_iam_role_policy_attachment" "ssm" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+  role       = aws_iam_role.ec2_role.name
+}
+
+# Instance Profile
+resource "aws_iam_instance_profile" "ec2_profile" {
+  name = "ec2-profile-${random_string.suffix.result}"
+  role = aws_iam_role.ec2_role.name
+}
+
+# EC2 Instance
+resource "aws_instance" "web" {
+  ami                         = var.ami_id
+  instance_type               = var.instance_type
+  subnet_id                   = aws_subnet.public["public-a"].id
   vpc_security_group_ids      = [aws_security_group.web.id]
   associate_public_ip_address = true
-  key_name                   = aws_key_pair.deployer.key_name
+  key_name                    = aws_key_pair.deployer.key_name
+  iam_instance_profile        = aws_iam_instance_profile.ec2_profile.name
 
   root_block_device {
     volume_size = 8
@@ -138,101 +164,33 @@ resource "aws_instance" "web" {
               echo "<h1>Hello from EC2</h1>" > /var/www/html/index.html
               EOF
 
-  tags = {
+  tags = merge(var.tags, {
     Name = "web-server"
-  }
+  })
 }
 
-# Attach EBS volume
+# Attach EBS Volume
 resource "aws_volume_attachment" "data" {
   device_name = "/dev/sdf"
   volume_id   = aws_ebs_volume.data.id
   instance_id = aws_instance.web.id
 }
 
-# Create snapshot
-resource "aws_ebs_snapshot" "data_snapshot" {
-  volume_id = aws_ebs_volume.data.id
 
-  tags = {
-    Name = "data-volume-snapshot"
-  }
-}
-
-# Create CloudWatch alarms
+# CloudWatch Alarm (CPU)
 resource "aws_cloudwatch_metric_alarm" "cpu_alarm" {
   alarm_name          = "cpu-utilization"
   comparison_operator = "GreaterThanThreshold"
-  evaluation_periods  = "2"
+  evaluation_periods  = 2
   metric_name         = "CPUUtilization"
   namespace           = "AWS/EC2"
-  period             = "300"
-  statistic          = "Average"
-  threshold          = "80"
-  alarm_description  = "This metric monitors EC2 CPU utilization"
+  period              = 300
+  statistic           = "Average"
+  threshold           = 80
+  alarm_description   = "This metric monitors EC2 CPU utilization"
 
   dimensions = {
     InstanceId = aws_instance.web.id
   }
 }
 
-# Create IAM role for EC2
-resource "aws_iam_role" "ec2_role" {
-  name = "ec2-role-${random_string.suffix.result}"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
-        Principal = {
-          Service = "ec2.amazonaws.com"
-        }
-      }
-    ]
-  })
-}
-
-# Attach SSM policy to role
-resource "aws_iam_role_policy_attachment" "ssm" {
-  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
-  role       = aws_iam_role.ec2_role.name
-}
-
-# Create instance profile
-resource "aws_iam_instance_profile" "ec2_profile" {
-  name = "ec2-profile-${random_string.suffix.result}"
-  role = aws_iam_role.ec2_role.name
-}
-
-# Outputs
-output "instance_id" {
-  description = "ID of the EC2 instance"
-  value       = aws_instance.web.id
-}
-
-output "instance_public_ip" {
-  description = "Public IP of the EC2 instance"
-  value       = aws_instance.web.public_ip
-}
-
-output "volume_id" {
-  description = "ID of the EBS volume"
-  value       = aws_ebs_volume.data.id
-}
-
-output "snapshot_id" {
-  description = "ID of the EBS snapshot"
-  value       = aws_ebs_snapshot.data_snapshot.id
-}
-
-output "security_group_id" {
-  description = "ID of the security group"
-  value       = aws_security_group.web.id
-}
-
-output "ssh_command" {
-  description = "Command to SSH into the instance"
-  value       = "ssh -i ~/.ssh/id_rsa ec2-user@${aws_instance.web.public_ip}"
-} 
