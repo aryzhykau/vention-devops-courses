@@ -1,8 +1,13 @@
 output "bucket_ids" {
-  description = "IDs of the created S3 buckets"
-  value = {
-    for name, mod in module.s3_buckets :
-    name => mod.bucket_id
-  }
+  value = { for k, m in module.s3_buckets : k => m.bucket_id }
 }
+
+output "bucket_arns" {
+  value = { for k, m in module.s3_buckets : k => m.bucket_arn }
+}
+
+output "bucket_regions" {
+  value = { for k, m in module.s3_buckets : k => m.bucket_region }
+}
+
 
