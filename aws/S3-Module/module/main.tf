@@ -1,7 +1,9 @@
 resource "aws_s3_bucket" "this" {
-  bucket = var.bucket_name
-  tags   = {
-    Name = var.bucket_name
+  bucket        = var.bucket_config.name
+  force_destroy = true
+
+  tags = {
+    Name = var.bucket_config.name
   }
 }
 
@@ -9,29 +11,44 @@ resource "aws_s3_bucket_versioning" "this" {
   bucket = aws_s3_bucket.this.id
 
   versioning_configuration {
-    status = var.versioning_enabled ? "Enabled" : "Suspended"
+    status = var.bucket_config.versioning ? "Enabled" : "Suspended"
   }
 }
 
-resource "aws_s3_bucket_public_access_block" "this" {
-  bucket                  = aws_s3_bucket.this.id
-  block_public_acls       = var.public_access.block_public_acls
-  ignore_public_acls      = var.public_access.ignore_public_acls
-  block_public_policy     = var.public_access.block_public_policy
-  restrict_public_buckets = var.public_access.restrict_public_buckets
-}
-
 resource "aws_s3_bucket_server_side_encryption_configuration" "this" {
-  bucket = aws_s3_bucket.this.bucket
+  bucket = aws_s3_bucket.this.id
 
   rule {
     apply_server_side_encryption_by_default {
-      sse_algorithm = var.encryption_algorithm
+      sse_algorithm = var.bucket_config.encryption ? "AES256" : "aws:kms"
     }
   }
 }
 
+resource "aws_s3_bucket_public_access_block" "this" {
+  bucket = aws_s3_bucket.this.id
+
+  block_public_acls       = var.bucket_config.block_public
+  ignore_public_acls      = var.bucket_config.block_public
+  block_public_policy     = var.bucket_config.block_public
+  restrict_public_buckets = var.bucket_config.block_public
+}
+
 resource "aws_s3_bucket_policy" "this" {
   bucket = aws_s3_bucket.this.id
-  policy = var.bucket_policy
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid       = var.bucket_config.policy.sid
+        Effect    = var.bucket_config.policy.effect
+        Action    = var.bucket_config.policy.action
+        Principal = var.bucket_config.policy.principal
+        Resource  = "arn:aws:s3:::${aws_s3_bucket.this.id}"
+      }
+    ]
+  })
 }
+
+
+
