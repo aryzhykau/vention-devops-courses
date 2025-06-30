@@ -1,5 +1,5 @@
 variable "buckets" {
-  description = "Map of buckets"
+  description = "Map of bucket configurations passed to the S3 module"
   type = map(object({
     name         = string
     versioning   = bool
@@ -13,5 +13,6 @@ variable "buckets" {
     })
   }))
 }
+
 
 

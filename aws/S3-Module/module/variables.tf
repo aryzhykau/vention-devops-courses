@@ -1,6 +1,6 @@
-variable "bucket_config" {
-  description = "Single bucket config passed from the root module"
-  type = object({
+variable "buckets" {
+  description = "Map of S3 bucket configurations"
+  type = map(object({
     name         = string
     versioning   = bool
     encryption   = bool
@@ -11,7 +11,7 @@ variable "bucket_config" {
       action    = string
       principal = string
     })
-  })
+  }))
 }
 
 
