@@ -1,14 +1,23 @@
-output "bucket_id" {
-  description = "The ID of the created S3 bucket"
-  value       = aws_s3_bucket.this.id
+output "bucket_ids" {
+  description = "The IDs of all created S3 buckets"
+  value = {
+    for k, bucket in aws_s3_bucket.this : k => bucket.id
+  }
 }
 
-output "bucket_arn" {
-  description = "The ARN of the created S3 bucket"
-  value       = aws_s3_bucket.this.arn
+output "bucket_arns" {
+  description = "The ARNs of all created S3 buckets"
+  value = {
+    for k, bucket in aws_s3_bucket.this : k => bucket.arn
+  }
 }
 
-output "bucket_region" {
-  description = "The region where the S3 bucket is created"
-  value       = aws_s3_bucket.this.region
+output "bucket_regions" {
+  description = "The hardcoded region for all created S3 buckets"
+  # If you want to use actual dynamic region, replace with bucket.region
+  value = {
+    for k, bucket in aws_s3_bucket.this : k => "eu-central-1"
+  }
 }
+
+

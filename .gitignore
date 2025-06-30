@@ -41,3 +41,15 @@ docker.sock
 
 # Файлы с заметками для AI в модулях
 */.module_notes.md 
+
+# Terraform state files and working dirs
+*.tfstate
+*.tfstate.backup
+.terraform/
+*.tfplan
+
+# Optional override or var files
+terraform.tfvars.json
+override.tf
+override.tf.json
+
