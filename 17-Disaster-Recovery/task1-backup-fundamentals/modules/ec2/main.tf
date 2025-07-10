@@ -15,7 +15,7 @@ resource "aws_security_group" "ec2_sg" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["YOUR_PUBLIC_IP/32"]
+    cidr_blocks = ["88.212.17.33/32"]
   }
 
   egress {
@@ -51,5 +51,10 @@ resource "aws_instance" "app" {
   }
 }
 
+resource "aws_lb_target_group_attachment" "ec2_attach" {
+  target_group_arn = var.target_group_arn
+  target_id        = aws_instance.app.id
+  port             = 80
+}
 
 

@@ -12,3 +12,7 @@ output "alb_listener_arn" {
   description = "ALB listener ARN"
   value       = aws_lb_listener.http.arn
 }
+
+output "target_group_arn" {
+  value = aws_lb_target_group.app_tg.arn
+}
