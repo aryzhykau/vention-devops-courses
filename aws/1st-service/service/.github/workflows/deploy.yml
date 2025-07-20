@@ -1,0 +1,54 @@
+name: Deploy to AWS
+
+on:
+  push:
+    branches: [student/Peter_Tatransky]
+  pull_request:
+    branches: [student/Peter_Tatransky]
+
+env:
+  AWS_REGION: eu-central-1
+  ECR_REPOSITORY: aws-1st-service
+  ECS_SERVICE: aws-1st-service-service
+  ECS_CLUSTER: aws-1st-service-cluster
+  ECS_TASK_DEFINITION: aws-1st-service-task
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+
+  deploy:
+    needs: test
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v3
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build, tag, and push image to ECR
+        run: |
+          docker build -t $ECR_REPOSITORY .
+          docker tag $ECR_REPOSITORY:latest ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:latest
+          docker push ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:latest
+
+      - name: Deploy with Terraform
+        run: |
+          cd aws/1st-service/terraform
+          terraform init
+          terraform apply -auto-approve
