@@ -8,7 +8,7 @@ Instructions for setting up CI/CD pipeline using GitHub Actions with self-hosted
 - Create GitHub Actions workflow
 - Configure AWS credentials
 - Set up ECR repository
-- Configure ECS deployment
+- Configure running app on the same instance with a runner using docker
 
 ## Self-Hosted Runner Setup
 
