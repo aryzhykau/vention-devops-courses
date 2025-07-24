@@ -9,9 +9,7 @@ on:
 env:
   AWS_REGION: eu-central-1
   ECR_REPOSITORY: aws-1st-service
-  ECS_SERVICE: aws-1st-service-service
-  ECS_CLUSTER: aws-1st-service-cluster
-  ECS_TASK_DEFINITION: aws-1st-service-task
+  IMAGE_TAG: latest
 
 jobs:
   test:
@@ -28,8 +26,10 @@ jobs:
   deploy:
     needs: test
     runs-on: self-hosted
+
     steps:
       - uses: actions/checkout@v3
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
@@ -41,14 +41,24 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build, tag, and push image to ECR
+      - name: Build Docker image
         run: |
-          docker build -t $ECR_REPOSITORY .
-          docker tag $ECR_REPOSITORY:latest ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:latest
-          docker push ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:latest
+          docker build -t $ECR_REPOSITORY:$IMAGE_TAG .
 
-      - name: Deploy with Terraform
+      - name: Tag and Push to ECR
         run: |
-          cd aws/1st-service/terraform
-          terraform init
-          terraform apply -auto-approve
+          IMAGE_URI="${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:$IMAGE_TAG"
+          docker tag $ECR_REPOSITORY:$IMAGE_TAG $IMAGE_URI
+          docker push $IMAGE_URI
+
+      - name: Stop old container if running
+        run: |
+          docker stop app || true
+          docker rm app || true
+
+      - name: Run new container from ECR
+        run: |
+          IMAGE_URI="${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:$IMAGE_TAG"
+          docker pull $IMAGE_URI
+          docker run -d --name app -p 80:3000 $IMAGE_URI
+
