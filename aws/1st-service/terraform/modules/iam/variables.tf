@@ -3,12 +3,11 @@ variable "environment" {
   type        = string
 }
 
-variable "s3_bucket_arn" {
-  description = "S3 bucket ARN"
-  type        = string
+variable "iam_policies" {
+  description = "Map of IAM policies with filenames and descriptions"
+  type = map(object({
+    description     = string
+    policy_filename = string
+  }))
 }
 
-variable "rds_arn" {
-  description = "RDS ARN"
-  type        = string
-}

@@ -3,11 +3,6 @@ variable "vpc_id" {
   type        = string
 }
 
-variable "private_subnet_ids" {
-  description = "Private subnet IDs"
-  type        = list(string)
-}
-
 variable "environment" {
   description = "Environment name"
   type        = string
@@ -30,3 +25,9 @@ variable "db_password" {
   type        = string
   sensitive   = true
 }
+
+variable "ec2_sg_id" {
+  description = "Security Group ID of EC2 instance that can access RDS"
+  type        = string
+}
+
