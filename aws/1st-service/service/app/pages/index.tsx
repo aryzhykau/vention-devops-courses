@@ -56,7 +56,6 @@ export default function Home() {
         setIsLoggedIn(true);
       }
     } catch (error) {
-      console.error('Error fetching user profile:', error);
       localStorage.removeItem('token');
     }
   };
@@ -73,7 +72,7 @@ export default function Home() {
         setFiles(filesData);
       }
     } catch (error) {
-      console.error('Error fetching files:', error);
+      // console.error('Error fetching files:', error);
     }
   };
 
@@ -98,7 +97,6 @@ export default function Home() {
         alert('Login failed. Please check your credentials.');
       }
     } catch (error) {
-      console.error('Login error:', error);
       alert('Login failed. Please try again.');
     }
   };
@@ -132,7 +130,6 @@ export default function Home() {
         alert(`Registration failed: ${error.message}`);
       }
     } catch (error) {
-      console.error('Registration error:', error);
       alert('Registration failed. Please try again.');
     }
   };
@@ -176,7 +173,6 @@ export default function Home() {
         alert('File upload failed. Please try again.');
       }
     } catch (error) {
-      console.error('Upload error:', error);
       alert('File upload failed. Please try again.');
     } finally {
       setUploading(false);
@@ -204,7 +200,6 @@ export default function Home() {
         document.body.removeChild(a);
       }
     } catch (error) {
-      console.error('Download error:', error);
       alert('Download failed. Please try again.');
     }
   };
@@ -249,7 +244,7 @@ export default function Home() {
                   <button type="submit">Login</button>
                 </form>
                 <p>
-                  Don't have an account?{' '}
+                  Don&apos;t have an account?{' '}
                   <button 
                     className={styles.linkButton}
                     onClick={() => setIsRegistering(true)}
