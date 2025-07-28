@@ -34,7 +34,7 @@ jobs:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v3
-  
+
       - name: Set AWS region
         run: |
           echo "AWS_REGION=${{ env.AWS_REGION }}" >> $GITHUB_ENV
@@ -44,10 +44,12 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: Build Docker image
+        working-directory: aws/1st-service/service/app
         run: |
           docker build -t $ECR_REPOSITORY:$IMAGE_TAG .
 
       - name: Tag and Push to ECR
+        working-directory: aws/1st-service/service/app
         run: |
           IMAGE_URI="${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:$IMAGE_TAG"
           docker tag $ECR_REPOSITORY:$IMAGE_TAG $IMAGE_URI
