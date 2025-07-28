@@ -1,0 +1,67 @@
+name: Deploy to AWS
+
+on:
+  push:
+    branches: [student/Peter_Tatransky]
+  pull_request:
+    branches: [student/Peter_Tatransky]
+
+env:
+  AWS_REGION: eu-central-1
+  ECR_REPOSITORY: aws-1st-service
+  IMAGE_TAG: latest
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: aws/1st-service/service/app
+
+      - name: Run linter
+        run: npm run lint
+        working-directory: aws/1st-service/service/app
+
+  deploy:
+    needs: test
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set AWS region
+        run: |
+          echo "AWS_REGION=${{ env.AWS_REGION }}" >> $GITHUB_ENV
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build Docker image
+        working-directory: aws/1st-service/service/app
+        run: |
+          docker build -t $ECR_REPOSITORY:$IMAGE_TAG .
+
+      - name: Tag and Push to ECR
+        working-directory: aws/1st-service/service/app
+        run: |
+          IMAGE_URI="${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:$IMAGE_TAG"
+          docker tag $ECR_REPOSITORY:$IMAGE_TAG $IMAGE_URI
+          docker push $IMAGE_URI
+
+      - name: Stop old container if running
+        run: |
+          docker stop app || true
+          docker rm app || true
+
+      - name: Run new container from ECR
+        run: |
+          IMAGE_URI="${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:$IMAGE_TAG"
+          docker pull $IMAGE_URI
+          docker run -d --name app -p 80:3000 $IMAGE_URI
