@@ -8,23 +8,14 @@ data "aws_subnet" "existing" {
   id = "subnet-03f686eb716a34167"
 }
 
-# S3
+# S3 Module
 module "s3" {
   source       = "../modules/s3"
   environment  = var.environment
   project_name = var.project_name
 }
 
-# RDS
-module "rds" {
-  source             = "../modules/rds"
-  vpc_id             = data.aws_vpc.existing.id
-  environment        = var.environment
-  db_password        = var.db_password
-  ec2_sg_id          = module.ec2.security_group_id
-}
-
-# IAM
+# IAM Module
 module "iam" {
   source      = "../modules/iam"
   environment = var.environment
@@ -41,23 +32,31 @@ module "iam" {
   }
 }
 
-# Load Balancer
-module "loadbalancer" {
-  source            = "../modules/loadbalancing"
-  vpc_id            = data.aws_vpc.existing.id
-  public_subnet_ids = [data.aws_subnet.existing.id] # single subnet
-  environment       = var.environment
-}
-
-# EC2
+# EC2 Module
 module "ec2" {
-  source          = "../modules/ec2"
-  subnet_id       = data.aws_subnet.existing.id
-  ami             = "ami-0767046d1677be5a0"
-  instance_type   = "t2.micro"
-  key_name        = "github-runner-key"
-  existing_sg_id  = "sg-04a125ad25ff6bfbb"
-  environment     = var.environment
+  source         = "../modules/ec2"
+  subnet_id      = data.aws_subnet.existing.id
+  ami            = "ami-0767046d1677be5a0"
+  instance_type  = "t2.micro"
+  key_name       = "github-runner-key"
+  existing_sg_id = "sg-04a125ad25ff6bfbb"
+  environment    = var.environment
 }
 
+module "loadbalancer" {
+  source                  = "../modules/loadbalancing"
+  vpc_id                  = data.aws_vpc.existing.id
+  public_subnet_ids       = [data.aws_subnet.existing.id]
+  environment             = var.environment
+  existing_target_group_arn = "arn:aws:elasticloadbalancing:eu-central-1:601457281385:targetgroup/tg-app/e393eea3ef1cb732"
+}
+
+# RDS Module (optional and commented out)
+# module "rds" {
+#   source             = "../modules/rds"
+#   vpc_id             = data.aws_vpc.existing.id
+#   environment        = var.environment
+#   db_password        = var.db_password
+#   ec2_sg_id          = module.ec2.security_group_id
+# }
 

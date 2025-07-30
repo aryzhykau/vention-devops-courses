@@ -6,18 +6,6 @@ output "bucket_arn" {
   value = module.s3.bucket_arn
 }
 
-output "rds_endpoint" {
-  value = module.rds.db_endpoint
-}
-
-output "rds_port" {
-  value = module.rds.db_port
-}
-
-output "rds_name" {
-  value = module.rds.db_name
-}
-
 output "ec2_role_arn" {
   value = module.iam.ec2_role_arn
 }

@@ -13,3 +13,9 @@ variable "environment" {
   type        = string
 }
 
+variable "existing_target_group_arn" {
+  description = "Existing target group ARN to attach listener"
+  type        = string
+}
+
+
