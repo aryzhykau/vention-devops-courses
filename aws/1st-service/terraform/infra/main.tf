@@ -1,21 +1,18 @@
-# Use existing VPC
-data "aws_vpc" "existing" {
-  id = "vpc-0469a379c8f2f3221"
+# VPC 
+module "vpc" {
+  source      = "../modules/vpc"
+  vpc_cidr    = var.vpc_cidr
+  environment = var.environment
 }
 
-# Use existing Subnet
-data "aws_subnet" "existing" {
-  id = "subnet-03f686eb716a34167"
-}
-
-# S3 Module
+# S3 Bucket 
 module "s3" {
   source       = "../modules/s3"
   environment  = var.environment
   project_name = var.project_name
 }
 
-# IAM Module
+# IAM Role for EC2 (used by GitHub Actions runner) 
 module "iam" {
   source      = "../modules/iam"
   environment = var.environment
@@ -32,31 +29,48 @@ module "iam" {
   }
 }
 
-# EC2 Module
+# Security Group for EC2 
+resource "aws_security_group" "ec2_sg" {
+  name        = "ec2-sg-${var.environment}"
+  description = "Allow SSH and HTTP"
+  vpc_id      = module.vpc.vpc_id
+
+  ingress {
+    description = "Allow SSH"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "Allow HTTP"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "ec2-sg-${var.environment}"
+  }
+}
+
+# EC2 Instance (GitHub Runner + Docker App) 
 module "ec2" {
-  source         = "../modules/ec2"
-  subnet_id      = data.aws_subnet.existing.id
-  ami            = "ami-0767046d1677be5a0"
-  instance_type  = "t2.micro"
-  key_name       = "github-runner-key"
-  existing_sg_id = "sg-04a125ad25ff6bfbb"
-  environment    = var.environment
+  source                   = "../modules/ec2"
+  ami                      = "ami-0767046d1677be5a0" # Ubuntu 22.04 LTS
+  instance_type            = "t3.micro"
+  subnet_id                = module.vpc.public_subnet_ids[0]
+  key_name                 = "github-runner-key"
+  existing_sg_id           = aws_security_group.ec2_sg.id
+  environment              = var.environment
+  iam_instance_profile_name = module.iam.instance_profile_name
 }
-
-module "loadbalancer" {
-  source                  = "../modules/loadbalancing"
-  vpc_id                  = data.aws_vpc.existing.id
-  public_subnet_ids       = [data.aws_subnet.existing.id]
-  environment             = var.environment
-  existing_target_group_arn = "arn:aws:elasticloadbalancing:eu-central-1:601457281385:targetgroup/tg-app/e393eea3ef1cb732"
-}
-
-# RDS Module (optional and commented out)
-# module "rds" {
-#   source             = "../modules/rds"
-#   vpc_id             = data.aws_vpc.existing.id
-#   environment        = var.environment
-#   db_password        = var.db_password
-#   ec2_sg_id          = module.ec2.security_group_id
-# }
-
