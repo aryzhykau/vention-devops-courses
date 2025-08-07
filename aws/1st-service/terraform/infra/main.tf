@@ -1,76 +1,84 @@
-# VPC 
 module "vpc" {
-  source      = "../modules/vpc"
-  vpc_cidr    = var.vpc_cidr
-  environment = var.environment
+  source             = "../modules/vpc"
+  vpc_cidr           = var.vpc_cidr
+  availability_zones = var.availability_zones
+  environment        = var.environment
+  project_name       = var.project_name
 }
 
-# S3 Bucket 
 module "s3" {
   source       = "../modules/s3"
   environment  = var.environment
   project_name = var.project_name
 }
 
-# IAM Role for EC2 (used by GitHub Actions runner) 
 module "iam" {
-  source      = "../modules/iam"
-  environment = var.environment
-
-  iam_policies = {
-    "s3-policy" = {
-      description     = "Allow S3 access for EC2"
-      policy_filename = "s3-policy.json"
-    },
-    "rds-policy" = {
-      description     = "Allow RDS access for EC2"
-      policy_filename = "rds-policy.json"
-    }
-  }
+  source       = "../modules/iam"
+  environment  = var.environment
+  iam_policies = var.iam_policies
 }
 
-# Security Group for EC2 
-resource "aws_security_group" "ec2_sg" {
-  name        = "ec2-sg-${var.environment}"
-  description = "Allow SSH and HTTP"
+# Security Groups (created with for_each)
+resource "aws_security_group" "sg" {
+  for_each    = var.security_groups
+  name        = "${each.key}-${var.environment}"
+  description = each.value.description
   vpc_id      = module.vpc.vpc_id
 
-  ingress {
-    description = "Allow SSH"
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+  dynamic "ingress" {
+    for_each = each.value.ingress
+    content {
+      description = ingress.value.description
+      from_port   = ingress.value.from_port
+      to_port     = ingress.value.to_port
+      protocol    = ingress.value.protocol
+      cidr_blocks = ingress.value.cidr_blocks
+    }
   }
 
-  ingress {
-    description = "Allow HTTP"
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+  dynamic "egress" {
+    for_each = each.value.egress
+    content {
+      from_port   = egress.value.from_port
+      to_port     = egress.value.to_port
+      protocol    = egress.value.protocol
+      cidr_blocks = egress.value.cidr_blocks
+    }
   }
 
   tags = {
-    Name = "ec2-sg-${var.environment}"
+    Name = "${each.key}-${var.environment}"
   }
 }
 
-# EC2 Instance (GitHub Runner + Docker App) 
 module "ec2" {
-  source                   = "../modules/ec2"
-  ami                      = "ami-0767046d1677be5a0" # Ubuntu 22.04 LTS
-  instance_type            = "t3.micro"
-  subnet_id                = module.vpc.public_subnet_ids[0]
-  key_name                 = "github-runner-key"
-  existing_sg_id           = aws_security_group.ec2_sg.id
-  environment              = var.environment
+  source                    = "../modules/ec2"
+  ami                       = var.ec2_ami
+  instance_type             = var.ec2_instance_type
+  subnet_id                 = module.vpc.public_subnet_ids[0]
+  key_name                  = var.ec2_key_name
+  existing_sg_id            = aws_security_group.sg["ec2-sg"].id
+  environment               = var.environment
   iam_instance_profile_name = module.iam.instance_profile_name
+}
+
+module "rds" {
+  source                 = "../modules/rds"
+  environment            = var.environment
+  project_name           = var.project_name
+  db_name                = "mydb"
+  db_username            = "postgres"
+  db_password            = var.db_password
+  vpc_security_group_ids = [aws_security_group.sg["ec2-sg"].id]
+  subnet_ids             = module.vpc.public_subnet_ids
+}
+
+module "alb" {
+  source             = "../modules/loadbalancing"
+  environment        = var.environment
+  project_name       = var.project_name
+  alb_sg_id          = aws_security_group.sg["alb-sg"].id
+  subnet_ids         = module.vpc.public_subnet_ids
+  target_instance_id = module.ec2.instance_id
+  vpc_id             = module.vpc.vpc_id
 }

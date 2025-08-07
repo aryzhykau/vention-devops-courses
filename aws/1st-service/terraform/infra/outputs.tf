@@ -1,36 +1,26 @@
-output "bucket_name" {
-  value = module.s3.bucket_name
+output "ec2_instance_id" {
+  description = "ID of the EC2 instance"
+  value       = module.ec2.instance_id
 }
 
-output "bucket_arn" {
-  value = module.s3.bucket_arn
-}
-
-output "ec2_role_arn" {
-  value = module.iam.ec2_role_arn
-}
-
-output "instance_profile_name" {
-  value = module.iam.instance_profile_name
-}
-
-output "alb_arn" {
-  value = module.loadbalancer.alb_arn
-}
-
-output "alb_listener_arn" {
-  value = module.loadbalancer.alb_listener_arn
+output "ec2_public_ip" {
+  description = "Public IP of the EC2 instance"
+  value       = module.ec2.public_ip
 }
 
 output "alb_dns_name" {
-  value = module.loadbalancer.alb_dns_name
+  description = "DNS name of the ALB"
+  value       = module.alb.dns_name
 }
 
-output "vpc_id" {
-  value = data.aws_vpc.existing.id
+output "rds_endpoint" {
+  description = "RDS endpoint"
+  value       = module.rds.db_endpoint
 }
 
-output "public_subnet_ids" {
-  value = [data.aws_subnet.existing.id]
+output "rds_port" {
+  description = "RDS port"
+  value       = module.rds.db_port
 }
+
 

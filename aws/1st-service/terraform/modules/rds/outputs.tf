@@ -1,14 +1,10 @@
 output "db_endpoint" {
-  description = "RDS endpoint"
-  value       = aws_db_instance.main.endpoint
-}
-
-output "db_name" {
-  description = "Database name"
-  value       = aws_db_instance.main.db_name
+  value       = aws_db_instance.this.address
+  description = "Database endpoint"
 }
 
 output "db_port" {
+  value       = aws_db_instance.this.port
   description = "Database port"
-  value       = aws_db_instance.main.port
 }
+

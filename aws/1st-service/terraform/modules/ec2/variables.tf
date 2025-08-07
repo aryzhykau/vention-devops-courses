@@ -21,3 +21,8 @@ variable "existing_sg_id" {
 variable "environment" {
   type = string
 }
+
+variable "iam_instance_profile_name" {
+  description = "IAM instance profile name to attach to the EC2 instance"
+  type        = string
+}

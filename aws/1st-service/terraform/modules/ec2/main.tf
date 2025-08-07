@@ -1,23 +1,16 @@
-resource "aws_instance" "app" {
+resource "aws_instance" "this" {
   ami                         = var.ami
   instance_type               = var.instance_type
   subnet_id                   = var.subnet_id
+  vpc_security_group_ids      = [var.existing_sg_id]
   key_name                    = var.key_name
-  associate_public_ip_address = true
+  iam_instance_profile        = var.iam_instance_profile_name
 
-  vpc_security_group_ids = [var.existing_sg_id]
-
-  # We omit user_data to avoid drift
-
-  lifecycle {
-    ignore_changes = [user_data]
-  }
+  user_data                   = file("${path.module}/user_data.sh")
 
   tags = {
-    Name        = "AppInstance"                   
-    Environment = var.environment
-    Project     = "aws-1st-service"
-    ManagedBy   = "Terraform"
+    Name = "ec2-${var.environment}"
   }
 }
+
 

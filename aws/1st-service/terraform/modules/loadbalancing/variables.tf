@@ -1,21 +1,28 @@
-variable "vpc_id" {
-  description = "VPC ID"
-  type        = string
-}
-
-variable "public_subnet_ids" {
-  description = "Public subnet IDs"
-  type        = list(string)
-}
-
 variable "environment" {
-  description = "Environment name"
-  type        = string
+  type = string
 }
 
-variable "existing_target_group_arn" {
-  description = "Existing target group ARN to attach listener"
-  type        = string
+variable "project_name" {
+  type = string
 }
 
+variable "alb_sg_id" {
+  type        = string
+  description = "Security group ID for ALB"
+}
+
+variable "subnet_ids" {
+  type        = list(string)
+  description = "Subnets for ALB"
+}
+
+variable "target_instance_id" {
+  type        = string
+  description = "EC2 instance ID to attach to ALB"
+}
+
+variable "vpc_id" {
+  type        = string
+  description = "VPC ID for ALB"
+}
 
