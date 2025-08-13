@@ -41,3 +41,6 @@ docker.sock
 
 # Файлы с заметками для AI в модулях
 */.module_notes.md 
+# Local Terraform vars/plan
+infra/terraform.tfvars
+tf.apply
