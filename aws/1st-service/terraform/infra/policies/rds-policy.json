@@ -2,8 +2,11 @@
   "Version": "2012-10-17",
   "Statement": [
     {
+      "Sid": "AllowQueryAccessExample",
       "Effect": "Allow",
-      "Action": ["rds-db:connect"],
+      "Action": [
+        "rds-db:connect"
+      ],
       "Resource": "*"
     }
   ]

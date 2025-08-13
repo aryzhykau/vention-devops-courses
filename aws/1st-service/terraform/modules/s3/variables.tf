@@ -1,10 +1,27 @@
 variable "environment" {
-  description = "Environment name"
-  type        = string
+  type = string
 }
 
 variable "project_name" {
-  description = "Project name"
-  type        = string
-  default     = "aws-1st-service"
+  type = string
+}
+
+variable "allowed_principal_arns" {
+  type    = list(string)
+  default = []
+}
+
+variable "enable_versioning" {
+  type    = bool
+  default = false
+}
+
+variable "enable_cors" {
+  type    = bool
+  default = false
+}
+
+variable "force_destroy" {
+  type    = bool
+  default = false
 }

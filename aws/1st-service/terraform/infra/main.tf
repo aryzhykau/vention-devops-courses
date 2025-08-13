@@ -6,19 +6,20 @@ module "vpc" {
   project_name       = var.project_name
 }
 
-module "s3" {
-  source       = "../modules/s3"
-  environment  = var.environment
-  project_name = var.project_name
-}
-
 module "iam" {
   source       = "../modules/iam"
   environment  = var.environment
   iam_policies = var.iam_policies
 }
 
-# Security Groups (created with for_each)
+module "s3" {
+  source                 = "../modules/s3"
+  environment            = var.environment
+  project_name           = var.project_name
+  allowed_principal_arns = [module.iam.ec2_role_arn]
+}
+
+# Security Groups from map
 resource "aws_security_group" "sg" {
   for_each    = var.security_groups
   name        = "${each.key}-${var.environment}"
@@ -51,6 +52,43 @@ resource "aws_security_group" "sg" {
   }
 }
 
+# Dedicated RDS SG + rule: only EC2 -> RDS:5432
+resource "aws_security_group" "rds_sg" {
+  name        = "rds-sg-${var.environment}"
+  description = "Allow Postgres from EC2"
+  vpc_id      = module.vpc.vpc_id
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "rds-sg-${var.environment}"
+  }
+}
+
+resource "aws_security_group_rule" "rds_ingress_from_ec2" {
+  type                     = "ingress"
+  from_port                = 5432
+  to_port                  = 5432
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.rds_sg.id
+  source_security_group_id = aws_security_group.sg["ec2-sg"].id
+}
+
+# Optional now: allow only ALB -> EC2 on 80
+resource "aws_security_group_rule" "ec2_http_from_alb" {
+  type                     = "ingress"
+  from_port                = 80
+  to_port                  = 80
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.sg["ec2-sg"].id
+  source_security_group_id = aws_security_group.sg["alb-sg"].id
+}
+
 module "ec2" {
   source                    = "../modules/ec2"
   ami                       = var.ec2_ami
@@ -60,6 +98,12 @@ module "ec2" {
   existing_sg_id            = aws_security_group.sg["ec2-sg"].id
   environment               = var.environment
   iam_instance_profile_name = module.iam.instance_profile_name
+
+  # user_data via templatefile
+  runner_repo_url = var.runner_repo_url
+  runner_version  = var.runner_version
+  runner_labels   = var.runner_labels
+  runner_token    = var.runner_token
 }
 
 module "rds" {
@@ -69,8 +113,13 @@ module "rds" {
   db_name                = "mydb"
   db_username            = "postgres"
   db_password            = var.db_password
-  vpc_security_group_ids = [aws_security_group.sg["ec2-sg"].id]
+  vpc_security_group_ids = [aws_security_group.rds_sg.id]
   subnet_ids             = module.vpc.public_subnet_ids
+  engine_version         = "14.17"
+  storage_type           = "gp2"
+  storage_encrypted      = false
+  backup_retention_days  = 0
+  apply_immediately      = false
 }
 
 module "alb" {
