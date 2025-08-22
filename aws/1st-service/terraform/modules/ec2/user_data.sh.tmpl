@@ -1,0 +1,55 @@
+#!/bin/bash
+
+set -euo pipefail
+
+REPO_URL="${repo_url}"
+RUNNER_VERSION="${runner_ver}"
+RUNNER_LABELS="${runner_labels}"
+RUNNER_TOKEN="${runner_token}"   
+
+export DEBIAN_FRONTEND=noninteractive
+
+apt-get update -y
+apt-get install -y curl jq tar unzip docker.io
+systemctl enable --now docker
+
+if ! id -u github >/dev/null 2>&1; then
+  useradd -m -s /bin/bash github
+fi
+usermod -aG docker github
+
+mkdir -p /home/github/actions-runner
+chown -R github:github /home/github/actions-runner
+cd /home/github/actions-runner
+
+if [[ ! -f "actions-runner-linux-x64-$${RUNNER_VERSION}.tar.gz" ]]; then
+  curl -fsSL -o "actions-runner-linux-x64-$${RUNNER_VERSION}.tar.gz" \
+    "https://github.com/actions/runner/releases/download/v$${RUNNER_VERSION}/actions-runner-linux-x64-$${RUNNER_VERSION}.tar.gz"
+fi
+
+if [[ ! -f "./bin/Runner.Listener" ]]; then
+  tar xzf "actions-runner-linux-x64-$${RUNNER_VERSION}.tar.gz"
+  chown -R github:github /home/github/actions-runner
+fi
+
+./bin/installdependencies.sh || true
+
+if [[ -n "$${RUNNER_TOKEN}" ]]; then
+  sudo -u github ./config.sh \
+    --unattended \
+    --replace \
+    --url "$${REPO_URL}" \
+    --token "$${RUNNER_TOKEN}" \
+    --labels "$${RUNNER_LABELS}"
+
+  ./svc.sh install
+  ./svc.sh start
+else
+  echo "Runner token not provided yet. Skipping registration. SSH later and run config.sh with the token."
+fi
+
+
+
+
+
+
